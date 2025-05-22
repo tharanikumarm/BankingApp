@@ -1,0 +1,114 @@
+--This is the SQL table creation
+--first table should create the less no of foreign key or less connected table
+
+/*first role table :*/
+
+CREATE TABLE roles (
+  role_id INT PRIMARY KEY AUTO_INCREMENT,
+  role_name VARCHAR(50) NOT NULL
+);
+
+/*users table:*/
+
+CREATE TABLE users (
+  user_id VARCHAR(50) PRIMARY KEY,
+  username VARCHAR(50) NOT NULL,
+  password VARCHAR(100) NOT NULL,
+  role_id INT,
+  phoneNo BIGINT,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (role_id) REFERENCES roles(role_id)
+);
+
+
+/*usersdetails:*/
+
+
+CREATE TABLE usersdetails (
+  user_id VARCHAR(50),
+  name VARCHAR(100),
+  fathers_name VARCHAR(100),
+  marital_status VARCHAR(20),
+  address TEXT,
+  FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+/*branches:*/
+
+
+CREATE TABLE branches (
+  branch_id INT PRIMARY KEY AUTO_INCREMENT,
+  branch_name VARCHAR(100),
+  branch_address TEXT,
+  IFSC_code VARCHAR(20),
+  createdBy VARCHAR(50),
+  FOREIGN KEY (createdBy) REFERENCES users(user_id)
+);
+
+/*customerAcc:*/
+
+CREATE TABLE customerAcc (
+  acc_id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id VARCHAR(50),
+  account_type VARCHAR(30),
+  branch_id INT,
+  min_balance INT,
+  balance FLOAT,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id),
+  FOREIGN KEY (branch_id) REFERENCES branches(branch_id)
+);
+
+/*staffAcc:*/
+
+CREATE TABLE staffAcc (
+  staff_id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id VARCHAR(50),
+  branch_id INT,
+  joinedDate DATE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id),
+  FOREIGN KEY (branch_id) REFERENCES branches(branch_id)
+);
+
+/*KYB*/
+
+CREATE TABLE KYB (
+  user_id VARCHAR(50) PRIMARY KEY,
+  adhaar VARCHAR(20),
+  PAN VARCHAR(20),
+  fingerprint BLOB,
+  photo BLOB,
+  FOREIGN KEY (user_id) REFERENCES customerAcc(user_id)
+);
+
+/*Transaction*/
+
+CREATE TABLE transaction (
+  transaction_id INT PRIMARY KEY AUTO_INCREMENT,
+  account_id INT,
+  amount FLOAT,
+  `from` VARCHAR(100),
+  `to` VARCHAR(100),
+  transaction_date DATE,
+  recorded_by VARCHAR(50),
+  FOREIGN KEY (account_id) REFERENCES customerAcc(acc_id),
+  FOREIGN KEY (recorded_by) REFERENCES users(user_id)
+);
+
+/*tickets*/
+
+CREATE TABLE tickets (
+  ticket_id INT PRIMARY KEY AUTO_INCREMENT,
+  account_id INT,
+  issue TEXT,
+  assigned_to VARCHAR(50),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (account_id) REFERENCES customerAcc(acc_id),
+  FOREIGN KEY (assigned_to) REFERENCES users(user_id)
+);
+
+
+
+
+
+
